@@ -9,7 +9,6 @@ CODIGO_PROPIO = {
     "PCV": "....-",
     "PCA": "..--.",
 }
-
 SIGNIFICADO = {
     "PCR": "Pelota color rojo",
     "PCV": "Pelota color verde",
