@@ -1,19 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May  6 18:26:58 2026
-
-@author: Amely
-"""
-
 import os
 import wave
 import numpy as np
 import pyaudio
-
-
-# ==========================================
-# CONFIGURACIÓN
-# ==========================================
 
 FORMATO = pyaudio.paInt16
 CANALES = 1
@@ -21,31 +9,19 @@ TASA_MUESTREO = 44100
 TAMANO_BLOQUE = 1024
 TIEMPO_GRABACION = 3
 
-
-# ==========================================
-# FUNCIÓN PARA GRABAR AUDIO
-# ==========================================
-
 def grabar_audio():
 
-    # --------------------------------------
-    # PEDIR CARPETA Y NOMBRE
-    # --------------------------------------
+   #carpeta
 
     carpeta = input("Escribe la carpeta donde guardarás el audio: ")
     nombre = input("Escribe el nombre del archivo: ")
 
-    # Crear carpeta si no existe
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
 
-    # Ruta completa
     ruta_archivo = os.path.join(carpeta, nombre + ".wav")
 
-    # --------------------------------------
-    # INICIAR AUDIO
-    # --------------------------------------
-
+  #audio
     audio = pyaudio.PyAudio()
 
     try:
@@ -76,16 +52,9 @@ def grabar_audio():
     finally:
         audio.terminate()
 
-    # --------------------------------------
-    # UNIR FRAGMENTOS
-    # --------------------------------------
-
     senal_audio = np.hstack(fragmentos)
 
-    # --------------------------------------
-    # NORMALIZAR
-    # --------------------------------------
-
+#normalizar
     if np.max(np.abs(senal_audio)) != 0:
 
         senal_audio = (
@@ -94,10 +63,7 @@ def grabar_audio():
 
         senal_audio = senal_audio.astype(np.int16)
 
-    # --------------------------------------
-    # GUARDAR WAV
-    # --------------------------------------
-
+   #wav
     archivo_wave = wave.open(ruta_archivo, "wb")
 
     archivo_wave.setnchannels(CANALES)
@@ -115,10 +81,5 @@ def grabar_audio():
     print(f"\nAudio guardado en:\n{ruta_archivo}")
 
     return ruta_archivo
-
-
-# ==========================================
-# EJECUCIÓN
-# ==========================================
 
 grabar_audio()
