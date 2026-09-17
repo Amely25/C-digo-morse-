@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import sounddevice as sd
 import matplotlib.pyplot as plt
 from scipy.signal import firwin, filtfilt
 from scipy.ndimage import uniform_filter1d
 
-# =========================
-# DICCIONARIO
-# =========================
 CODIGO_PROPIO = {
     "PCR": ".-..-",
     "PCV": "....-",
@@ -20,33 +15,19 @@ SIGNIFICADO = {
     "PCV": "Pelota color verde",
     "PCA": "Pelota color azul",
 }
-
-# =========================
-# AUDIO
-# =========================
 fs = 44100
 DURACION_ESCUCHA = 6
-
 freq_punto = 697
 freq_raya = 1195
-
-# =========================
-# FILTRO
-# =========================
+#Filtro
 tolerancia = 5
 numtaps = 4001
 
-# =========================
-# DETECCIÓN POR ENVOLVENTE
-# =========================
-UMBRAL_REL = 0.25        # sube a 0.30 si detecta ruido
-VENTANA_ENV = 800        # suavizado de envolvente
-MIN_TONO = 0.08          # duración mínima de símbolo
-MIN_SILENCIO = 0.035     # pausa mínima para separar símbolos
+UMBRAL_REL = 0.25        
+VENTANA_ENV = 800        
+MIN_TONO = 0.08          
+MIN_SILENCIO = 0.035    
 
-# =========================
-# FUNCIONES
-# =========================
 def normalizar(x):
     return x / (np.max(np.abs(x)) + 1e-12)
 
@@ -61,7 +42,6 @@ def filtro_fir_pasabandas(audio, f_central):
         fs=fs,
         window="blackman"
     )
-
     return filtfilt(h, [1.0], audio)
 
 def detectar_patron(audio):
@@ -73,7 +53,6 @@ def detectar_patron(audio):
 
     th697 = UMBRAL_REL * np.max(env697)
     th1195 = UMBRAL_REL * np.max(env1195)
-
     etiquetas = []
 
     for e697, e1195 in zip(env697, env1195):
@@ -84,10 +63,6 @@ def detectar_patron(audio):
             etiquetas.append("-")
         else:
             etiquetas.append(" ")
-
-    # =========================
-    # AGRUPAR SEGMENTOS
-    # =========================
     patron = ""
     segmentos = []
 
@@ -111,10 +86,7 @@ def detectar_patron(audio):
         segmentos.append((actual, dur))
 
     return patron, segmentos, y697, y1195, env697, env1195
-
-# =========================
-# PROGRAMA PRINCIPAL
-# =========================
+#prrincipal
 print("=" * 50)
 print(" RECEPTOR MORSE CON FIR + ENVOLVENTE")
 print("=" * 50)
@@ -167,23 +139,19 @@ while True:
         t = np.arange(len(audio)) / fs
 
         plt.figure(figsize=(12, 8))
-
         plt.subplot(3, 1, 1)
         plt.plot(t, audio)
         plt.title("Audio original")
         plt.grid()
-
         plt.subplot(3, 1, 2)
         plt.plot(t, env697)
         plt.title("Envolvente 697 Hz")
         plt.grid()
-
         plt.subplot(3, 1, 3)
         plt.plot(t, env1195)
         plt.title("Envolvente 1195 Hz")
         plt.xlabel("Tiempo [s]")
         plt.grid()
-
         plt.tight_layout()
         plt.show()
 
